@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VolleyJump - Vertical Jump Tracker</title>
+  <title>VolleyJump - Vertical Jump & Peak Height Tracker</title>
   <!-- Google Fonts & Tailwind CSS -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
@@ -14,14 +14,10 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
-  <!-- Dice a iOS di usare questa icona nella schermata Home -->
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
-
-  <!-- Fa aprire il sito a tutto schermo come una vera app (senza la barra di Safari) -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="JumpTracker">
-
 
   <script>
     tailwind.config = {
@@ -48,7 +44,6 @@
   </script>
 
   <style>
-    /* Mobile-first touch optimizations */
     body {
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
@@ -57,9 +52,8 @@
       overflow-x: hidden;
     }
     input, textarea, button, select {
-      font-size: 16px !important; /* Prevents iOS auto-zoom on focus */
+      font-size: 16px !important;
     }
-    /* Custom scrollbar for modern sleek aesthetic */
     ::-webkit-scrollbar {
       width: 4px;
       height: 4px;
@@ -77,7 +71,6 @@
     .glow-blue {
       box-shadow: 0 0 20px -3px rgba(14, 165, 233, 0.35);
     }
-    /* Safe area utility for modern smartphones */
     .pb-safe {
       padding-bottom: calc(7.5rem + env(safe-area-inset-bottom, 16px));
     }
@@ -99,11 +92,10 @@
           VOLLEY<span class="text-volley-orange">JUMP</span>
           <span class="text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded bg-sky-500/10 text-sky-400 border border-sky-500/20">PRO</span>
         </h1>
-        <p class="text-xs text-slate-400">Vertical Progression Tracker</p>
+        <p class="text-xs text-slate-400">Punto Massimo & Elevazione</p>
       </div>
     </div>
 
-    <!-- Quick action: Export/Import/Reset menu -->
     <div class="flex items-center gap-1.5">
       <button onclick="openDataModal()" title="Gestione Dati Backup" class="p-2.5 rounded-xl bg-volley-card hover:bg-slate-800 border border-volley-border text-slate-300 hover:text-white transition active:scale-95">
         <i data-lucide="database" class="w-4 h-4"></i>
@@ -115,7 +107,7 @@
     </div>
   </header>
 
-  <!-- MAIN CONTAINER (Mobile optimized) -->
+  <!-- MAIN CONTAINER -->
   <main class="w-full max-w-xl mx-auto px-4 pt-5 space-y-6">
 
     <!-- HERO / BANNER INSIGHT -->
@@ -125,16 +117,15 @@
       
       <div class="flex items-start justify-between">
         <div>
-          <span class="text-[11px] font-bold uppercase tracking-wider text-volley-orange">Obiettivo Salto</span>
-          <h2 class="text-lg font-bold text-white mt-0.5">Schiacciata & Muro</h2>
-          <p class="text-xs text-slate-400 mt-1 max-w-[240px]">Registra ogni test e monitora l'altezza netta del tuo stacco verticale.</p>
+          <span class="text-[11px] font-bold uppercase tracking-wider text-volley-orange">Obiettivo Aereo</span>
+          <h2 class="text-lg font-bold text-white mt-0.5">Stacco & Tocco a Rete</h2>
+          <p class="text-xs text-slate-400 mt-1 max-w-[260px]">Monitora sia l'elevazione pura (cm) sia il punto d'impatto massimo da terra (metri).</p>
         </div>
         <div class="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-amber-400">
-          <i data-lucide="activity" class="w-6 h-6"></i>
+          <i data-lucide="arrow-up-circle" class="w-6 h-6"></i>
         </div>
       </div>
 
-      <!-- Quick Tips Banner -->
       <div class="mt-4 pt-3.5 border-t border-volley-border/70 flex items-center justify-between text-xs">
         <div class="flex items-center gap-2 text-slate-300">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -148,40 +139,55 @@
 
     <!-- KPI STATS CARDS -->
     <div class="grid grid-cols-2 gap-3 sm:gap-4">
-      <!-- PR Approach Jump -->
+      <!-- PR Approach Spike (Punto Massimo + cm) -->
       <div class="p-4 rounded-2xl bg-volley-card border border-volley-border relative overflow-hidden group">
-        <div class="flex items-center justify-between mb-1.5">
+        <div class="flex items-center justify-between mb-1">
           <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">PR Rincorsa</span>
           <span class="p-1.5 rounded-lg bg-orange-500/10 text-volley-orange border border-orange-500/20">
             <i data-lucide="flame" class="w-4 h-4"></i>
           </span>
         </div>
         <div class="flex items-baseline gap-1">
-          <span id="kpiApproachMax" class="text-2xl font-black text-white tracking-tight">--</span>
-          <span class="text-xs font-semibold text-volley-orange">cm</span>
+          <span id="kpiApproachPeakMeters" class="text-2xl font-black text-white tracking-tight">--</span>
+          <span class="text-xs font-semibold text-volley-orange">m max</span>
         </div>
-        <p class="text-[11px] text-slate-400 mt-1 truncate" id="kpiApproachDate">Spike Jump Peak</p>
+        <p class="text-[11px] text-slate-400 mt-0.5" id="kpiApproachElevation">Elevazione: -- cm</p>
       </div>
 
-      <!-- PR Standing Block Jump -->
+      <!-- PR Standing Block (Punto Massimo + cm) -->
       <div class="p-4 rounded-2xl bg-volley-card border border-volley-border relative overflow-hidden group">
-        <div class="flex items-center justify-between mb-1.5">
+        <div class="flex items-center justify-between mb-1">
           <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">PR Da Fermo</span>
           <span class="p-1.5 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20">
             <i data-lucide="shield" class="w-4 h-4"></i>
           </span>
         </div>
         <div class="flex items-baseline gap-1">
-          <span id="kpiStandingMax" class="text-2xl font-black text-white tracking-tight">--</span>
-          <span class="text-xs font-semibold text-sky-400">cm</span>
+          <span id="kpiStandingPeakMeters" class="text-2xl font-black text-white tracking-tight">--</span>
+          <span class="text-xs font-semibold text-sky-400">m max</span>
         </div>
-        <p class="text-[11px] text-slate-400 mt-1 truncate" id="kpiStandingDate">Block Jump Peak</p>
+        <p class="text-[11px] text-slate-400 mt-0.5" id="kpiStandingElevation">Elevazione: -- cm</p>
+      </div>
+
+      <!-- Standing Reach -->
+      <div class="p-4 rounded-2xl bg-volley-card border border-volley-border relative overflow-hidden group">
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Portata a Terra</span>
+          <span class="p-1.5 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </span>
+        </div>
+        <div class="flex items-baseline gap-1">
+          <span id="kpiStandingReach" class="text-2xl font-black text-amber-300 tracking-tight">--</span>
+          <span class="text-xs font-semibold text-amber-400">m</span>
+        </div>
+        <p class="text-[11px] text-slate-400 mt-0.5">Braccio steso a terra</p>
       </div>
 
       <!-- Total Gain from First Test -->
       <div class="p-4 rounded-2xl bg-volley-card border border-volley-border relative overflow-hidden group">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Progresso</span>
+        <div class="flex items-center justify-between mb-1">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Progresso Netto</span>
           <span class="p-1.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
             <i data-lucide="trending-up" class="w-4 h-4"></i>
           </span>
@@ -190,53 +196,44 @@
           <span id="kpiTotalGain" class="text-2xl font-black text-emerald-400 tracking-tight">--</span>
           <span class="text-xs font-semibold text-emerald-400">cm</span>
         </div>
-        <p class="text-[11px] text-slate-400 mt-1 truncate" id="kpiGainLabel">Dall'inizio</p>
-      </div>
-
-      <!-- Recent 5 Tests Average -->
-      <div class="p-4 rounded-2xl bg-volley-card border border-volley-border relative overflow-hidden group">
-        <div class="flex items-center justify-between mb-1.5">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Media Recente</span>
-          <span class="p-1.5 rounded-lg bg-purple-500/10 text-purple-400 border border-purple-500/20">
-            <i data-lucide="gauge" class="w-4 h-4"></i>
-          </span>
-        </div>
-        <div class="flex items-baseline gap-1">
-          <span id="kpiRecentAvg" class="text-2xl font-black text-white tracking-tight">--</span>
-          <span class="text-xs font-semibold text-purple-400">cm</span>
-        </div>
-        <p class="text-[11px] text-slate-400 mt-1 truncate">Ultime sessioni</p>
+        <p class="text-[11px] text-slate-400 mt-0.5" id="kpiGainLabel">Dall'inizio</p>
       </div>
     </div>
 
-    <!-- PROGRESS CHART CARD (Optimized for Mobile width & height) -->
+    <!-- PROGRESS CHART CARD -->
     <div class="w-full max-w-full overflow-hidden rounded-2xl bg-volley-card border border-volley-border p-3 sm:p-4 shadow-xl">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-2.5">
         <div>
           <div class="flex items-center gap-2">
             <h3 class="font-bold text-sm sm:text-base text-white flex items-center gap-1.5">
               <i data-lucide="line-chart" class="w-4 h-4 text-volley-orange"></i>
-              Andamento Progressi
+              Progressione Salto
             </h3>
             <span id="chartCountBadge" class="text-[9px] sm:text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">0 test</span>
           </div>
-          <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Evoluzione del salto nel tempo</p>
+          <p class="text-[11px] text-slate-400 mt-0.5" id="chartSubtitle">Visualizzazione Elevazione Netta</p>
         </div>
 
-        <!-- Metric toggle filters (compact for mobile) -->
-        <div class="flex items-center bg-slate-900/95 p-0.5 rounded-lg border border-volley-border self-start">
-          <button id="filterAll" onclick="setChartFilter('all')" class="px-2 py-0.5 text-[10.5px] font-semibold rounded-md bg-volley-orange text-white transition">Entrambi</button>
-          <button id="filterSpike" onclick="setChartFilter('spike')" class="px-2 py-0.5 text-[10.5px] font-semibold rounded-md text-slate-400 hover:text-white transition">Rincorsa</button>
-          <button id="filterBlock" onclick="setChartFilter('block')" class="px-2 py-0.5 text-[10.5px] font-semibold rounded-md text-slate-400 hover:text-white transition">Fermo</button>
+        <div class="flex flex-wrap items-center gap-1.5 self-start sm:self-auto">
+          <!-- Toggle Metric: CM Elevazione vs METRI Altezza Totale -->
+          <div class="flex items-center bg-slate-900/95 p-0.5 rounded-lg border border-volley-border">
+            <button id="viewElevationBtn" onclick="setChartViewMode('elevation')" class="px-2 py-0.5 text-[10.5px] font-semibold rounded-md bg-volley-orange text-white transition">cm Stacco</button>
+            <button id="viewPeakBtn" onclick="setChartViewMode('peak')" class="px-2 py-0.5 text-[10.5px] font-semibold rounded-md text-slate-400 hover:text-white transition">m Da Terra</button>
+          </div>
+
+          <!-- Type filter -->
+          <div class="flex items-center bg-slate-900/95 p-0.5 rounded-lg border border-volley-border">
+            <button id="filterAll" onclick="setChartFilter('all')" class="px-2 py-0.5 text-[10.5px] font-semibold rounded-md bg-slate-700 text-white transition">Tutti</button>
+            <button id="filterSpike" onclick="setChartFilter('spike')" class="px-2 py-0.5 text-[10.5px] font-semibold rounded-md text-slate-400 hover:text-white transition">Rincorsa</button>
+            <button id="filterBlock" onclick="setChartFilter('block')" class="px-2 py-0.5 text-[10.5px] font-semibold rounded-md text-slate-400 hover:text-white transition">Fermo</button>
+          </div>
         </div>
       </div>
 
-      <!-- Canvas container with strict responsive wrapper and reduced mobile height -->
-      <div class="relative w-full max-w-full h-44 sm:h-56 overflow-hidden">
+      <div class="relative w-full max-w-full h-48 sm:h-60 overflow-hidden">
         <canvas id="jumpProgressChart" class="w-full h-full block"></canvas>
       </div>
 
-      <!-- Quick Chart Legend / Diff helper (compact) -->
       <div class="mt-2.5 pt-2 border-t border-volley-border/80 flex flex-wrap items-center justify-between gap-1.5 text-[11px] text-slate-400">
         <div class="flex items-center gap-3">
           <div class="flex items-center gap-1">
@@ -246,6 +243,10 @@
           <div class="flex items-center gap-1">
             <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
             <span>Fermo</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+            <span>Portata a terra</span>
           </div>
         </div>
         <div class="text-[10.5px] text-slate-400 italic" id="deltaHelper">
@@ -268,15 +269,13 @@
         </button>
       </div>
 
-      <!-- Empty State or List of items -->
-      <div id="sessionList" class="space-y-3">
-        <!-- Injected via JavaScript -->
-      </div>
+      <!-- Session list -->
+      <div id="sessionList" class="space-y-3"></div>
     </div>
 
   </main>
 
-  <!-- FLOATING BOTTOM ACTION FOR PHONE USE (Raised higher with safe-area spacing) -->
+  <!-- FLOATING BOTTOM ACTION -->
   <div class="fixed bottom-safe inset-x-0 px-4 max-w-xl mx-auto z-30 pointer-events-none">
     <button onclick="openEntryModal()" class="pointer-events-auto w-full py-3.5 px-5 bg-gradient-to-r from-volley-orange via-amber-500 to-yellow-500 text-white font-bold text-sm rounded-2xl shadow-2xl shadow-orange-500/35 border border-amber-400/30 flex items-center justify-center gap-2.5 active:scale-[0.98] transition">
       <i data-lucide="plus" class="w-5 h-5 stroke-[2.5]"></i>
@@ -285,8 +284,8 @@
   </div>
 
   <!-- MODAL: ADD / EDIT ENTRY -->
-  <div id="entryModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="w-full sm:max-w-md bg-slate-900 border border-slate-700/80 rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom duration-200">
+  <div id="entryModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+    <div class="w-full sm:max-w-lg bg-slate-900 border border-slate-700/80 rounded-t-3xl sm:rounded-2xl p-5 sm:p-6 shadow-2xl max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-volley-border">
         <div class="flex items-center gap-2">
           <span class="p-2 rounded-xl bg-orange-500/10 text-volley-orange">
@@ -294,7 +293,7 @@
           </span>
           <div>
             <h4 id="modalTitle" class="font-bold text-base text-white">Registra Salto</h4>
-            <p class="text-xs text-slate-400">Inserisci i centimetri e le tue riflessioni</p>
+            <p class="text-xs text-slate-400">Punto massimo toccato ed elevazione calcolata</p>
           </div>
         </div>
         <button onclick="closeEntryModal()" class="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition">
@@ -305,75 +304,129 @@
       <form id="jumpForm" onsubmit="handleSaveEntry(event)" class="mt-4 space-y-4">
         <input type="hidden" id="editEntryId" value="">
 
-        <!-- Date picker -->
-        <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-            Data Sessione
-          </label>
-          <div class="relative">
+        <!-- Date & Category -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
+              Data Sessione
+            </label>
             <input type="date" id="entryDate" required
-              class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3.5 py-3 text-white text-sm focus:outline-none focus:border-volley-orange transition">
+              class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-volley-orange transition">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
+              Focus Allenamento
+            </label>
+            <select id="entryCategory" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-2.5 text-white text-sm focus:outline-none focus:border-volley-orange transition">
+              <option value="Test Massimale">Test Massimale (Vertec / Parete)</option>
+              <option value="Seduta Pliometria">Seduta Pliometria / Drop Jump</option>
+              <option value="Palestra & Pesi">Palestra & Sovraccarichi</option>
+              <option value="Partita / Torneo">Post-Partita o Squadra</option>
+              <option value="Altro">Altro / Scarico</option>
+            </select>
           </div>
         </div>
 
-        <!-- Jump Metrics (Two Column on phone) -->
-        <div class="grid grid-cols-2 gap-3">
-          <!-- Approach Spike Jump -->
-          <div class="space-y-1.5">
-            <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1">
+        <!-- Standing Reach (Piedi a terra) -->
+        <div class="p-3.5 rounded-xl bg-slate-800/50 border border-volley-border space-y-1.5">
+          <div class="flex items-center justify-between">
+            <label class="block text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
+              <i data-lucide="ruler" class="w-3.5 h-3.5"></i>
+              Portata a terra (Braccio steso)
+            </label>
+            <span class="text-[11px] text-slate-400">Piedi a terra</span>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="relative">
+              <input type="number" id="entryStandingReachMeters" step="0.01" min="1.50" max="3.00" placeholder="es. 2.20"
+                oninput="syncFromReachMeters()"
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-3 pr-8 py-2 text-white font-semibold text-sm focus:border-amber-400 focus:outline-none">
+              <span class="absolute right-2.5 top-2 text-xs font-bold text-slate-400 pointer-events-none">m</span>
+            </div>
+            <div class="relative">
+              <input type="number" id="entryStandingReachCm" step="1" min="150" max="300" placeholder="es. 220"
+                oninput="syncFromReachCm()"
+                class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-3 pr-8 py-2 text-white font-semibold text-sm focus:border-amber-400 focus:outline-none">
+              <span class="absolute right-2.5 top-2 text-xs font-bold text-slate-400 pointer-events-none">cm</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Approach Jump Card -->
+        <div class="p-3.5 rounded-xl bg-slate-800/30 border border-volley-border/90 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-volley-orange uppercase tracking-wider flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-volley-orange"></span>
-              Rincorsa (cm)
+              Salto con Rincorsa (Spike)
             </label>
-            <div class="relative">
-              <input type="number" id="entryApproach" min="10" max="160" step="0.5" placeholder="es. 78" required
-                class="w-full bg-slate-800/90 border border-slate-700 rounded-xl pl-3 pr-10 py-3 text-white font-bold text-lg focus:outline-none focus:border-volley-orange transition">
-              <span class="absolute right-3 top-3.5 text-xs font-bold text-slate-400 pointer-events-none">cm</span>
-            </div>
-            <p class="text-[10px] text-slate-400">Spike / rincorsa 3 passi</p>
+            <span class="text-[10px] text-slate-400">3 passi di stacco</span>
           </div>
 
-          <!-- Standing Block Jump -->
-          <div class="space-y-1.5">
-            <label class="block text-xs font-semibold text-slate-300 flex items-center gap-1">
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <span class="block text-[11px] text-slate-400 mb-1">Punto Max Raggiunto</span>
+              <div class="relative">
+                <input type="number" id="entryApproachPeakMeters" step="0.01" min="1.80" max="4.00" placeholder="es. 2.85"
+                  oninput="calculateFromApproachPeak()"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-3 pr-8 py-2 text-white font-bold text-base focus:border-volley-orange focus:outline-none">
+                <span class="absolute right-2.5 top-2.5 text-xs font-bold text-slate-400 pointer-events-none">m</span>
+              </div>
+            </div>
+
+            <div>
+              <span class="block text-[11px] text-slate-400 mb-1">Elevazione Netta</span>
+              <div class="relative">
+                <input type="number" id="entryApproach" min="10" max="150" step="0.5" placeholder="es. 65" required
+                  oninput="calculateFromApproachElevation()"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-3 pr-9 py-2 text-volley-orange font-black text-base focus:border-volley-orange focus:outline-none">
+                <span class="absolute right-2.5 top-2.5 text-xs font-bold text-slate-400 pointer-events-none">cm</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Standing Jump Card -->
+        <div class="p-3.5 rounded-xl bg-slate-800/30 border border-volley-border/90 space-y-2.5">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
               <span class="w-2 h-2 rounded-full bg-sky-400"></span>
-              Da Fermo (cm)
+              Salto da Fermo (Block)
             </label>
-            <div class="relative">
-              <input type="number" id="entryStanding" min="10" max="140" step="0.5" placeholder="es. 62" required
-                class="w-full bg-slate-800/90 border border-slate-700 rounded-xl pl-3 pr-10 py-3 text-white font-bold text-lg focus:outline-none focus:border-sky-400 transition">
-              <span class="absolute right-3 top-3.5 text-xs font-bold text-slate-400 pointer-events-none">cm</span>
+            <span class="text-[10px] text-slate-400">Muro a secco</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2.5">
+            <div>
+              <span class="block text-[11px] text-slate-400 mb-1">Punto Max Raggiunto</span>
+              <div class="relative">
+                <input type="number" id="entryStandingPeakMeters" step="0.01" min="1.80" max="4.00" placeholder="es. 2.60"
+                  oninput="calculateFromStandingPeak()"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-3 pr-8 py-2 text-white font-bold text-base focus:border-sky-400 focus:outline-none">
+                <span class="absolute right-2.5 top-2.5 text-xs font-bold text-slate-400 pointer-events-none">m</span>
+              </div>
             </div>
-            <p class="text-[10px] text-slate-400">Block jump senza passi</p>
+
+            <div>
+              <span class="block text-[11px] text-slate-400 mb-1">Elevazione Netta</span>
+              <div class="relative">
+                <input type="number" id="entryStanding" min="10" max="150" step="0.5" placeholder="es. 40" required
+                  oninput="calculateFromStandingElevation()"
+                  class="w-full bg-slate-900 border border-slate-700 rounded-lg pl-3 pr-9 py-2 text-sky-400 font-black text-base focus:border-sky-400 focus:outline-none">
+                <span class="absolute right-2.5 top-2.5 text-xs font-bold text-slate-400 pointer-events-none">cm</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Training Focus / Tag -->
+        <!-- Notes -->
         <div>
-          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">
-            Focus Allenamento
+          <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1">
+            Note & Sensazioni
           </label>
-          <select id="entryCategory" class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3 py-3 text-white text-sm focus:outline-none focus:border-volley-orange transition">
-            <option value="Test Massimale">Test Massimale (Vertec / Parete)</option>
-            <option value="Seduta Pliometria">Seduta Pliometria / Drop Jump</option>
-            <option value="Palestra & Pesi">Palestra & Sovraccarichi (Squat/Trap Bar)</option>
-            <option value="Partita / Torneo">Post-Partita o Allenamento Squadra</option>
-            <option value="Altro">Altro / Scarico</option>
-          </select>
-        </div>
-
-        <!-- Training Paragraph / Notes -->
-        <div>
-          <div class="flex items-center justify-between mb-1.5">
-            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300">
-              Note, Sensazioni & Diario
-            </label>
-            <span class="text-[11px] text-slate-400">Dettagli sessione</span>
-          </div>
-          <textarea id="entryNotes" rows="3" placeholder="Es. Ottime sensazioni di stacco, utilizzate nuove scarpe Asics Sky Elite. Gambe fresche dopo 2 giorni di riposo..."
+          <textarea id="entryNotes" rows="2" placeholder="Sensazioni, scarpe usate, stanchezza..."
             class="w-full bg-slate-800/90 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white text-sm placeholder-slate-500 focus:outline-none focus:border-volley-orange transition"></textarea>
         </div>
 
-        <!-- Buttons -->
         <div class="pt-2 flex items-center gap-3">
           <button type="button" onclick="closeEntryModal()"
             class="flex-1 py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-750 text-slate-300 text-sm font-semibold active:scale-95 transition">
@@ -388,7 +441,7 @@
     </div>
   </div>
 
-  <!-- MODAL: DATA BACKUP / IMPORT & EXPORT -->
+  <!-- MODAL: DATA BACKUP -->
   <div id="dataModal" class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden items-center justify-center p-4">
     <div class="w-full max-w-md bg-slate-900 border border-slate-700 rounded-2xl p-5 shadow-2xl">
       <div class="flex items-center justify-between pb-3 border-b border-volley-border">
@@ -430,77 +483,82 @@
     <span id="toastMessage">Operazione completata</span>
   </div>
 
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- SCRIPT LOGIC -->
   <script>
-    // Storage Key
-    const STORAGE_KEY = 'volley_jump_tracker_records_v1';
+    const STORAGE_KEY = 'volley_jump_tracker_records_v2';
+    const DEFAULT_REACH_KEY = 'volley_jump_default_reach';
 
-    // Sample starting data (Volleyball specific progression)
+    // Dati di partenza calibrati sul tuo esempio (2.20m portata, 2.60m fermo, 2.85m rincorsa)
     const SAMPLE_RECORDS = [
       {
         id: 'sample-1',
         date: '2026-08-10',
-        approachJump: 68.0,
-        standingJump: 54.0,
+        standingReachMeters: 2.20,
+        approachPeakMeters: 2.76,
+        standingPeakMeters: 2.54,
+        approachJump: 56.0,
+        standingJump: 34.0,
         category: 'Test Massimale',
-        notes: 'Inizio preparazione estiva. Test di ingresso dopo 3 settimane di riposo. Buona reattività generale.'
+        notes: 'Inizio preparazione estiva. Test di ingresso dopo 3 settimane di riposo.'
       },
       {
         id: 'sample-2',
         date: '2026-08-28',
-        approachJump: 70.5,
-        standingJump: 56.0,
+        standingReachMeters: 2.20,
+        approachPeakMeters: 2.79,
+        standingPeakMeters: 2.56,
+        approachJump: 59.0,
+        standingJump: 36.0,
         category: 'Palestra & Pesi',
-        notes: 'Fine primo mesociclo di forza eccentrica (Squat e trap bar deadlift). Caviglie reattive.'
+        notes: 'Fine primo mesociclo di forza eccentrica (Squat e trap bar).'
       },
       {
         id: 'sample-3',
         date: '2026-09-15',
-        approachJump: 73.0,
-        standingJump: 57.5,
+        standingReachMeters: 2.20,
+        approachPeakMeters: 2.81,
+        standingPeakMeters: 2.57,
+        approachJump: 61.0,
+        standingJump: 37.0,
         category: 'Seduta Pliometria',
-        notes: 'Focus su box jump e depth jump da 45cm. Lavorato sulla rincorsa a 3 passi: timing braccia molto più fluido.'
+        notes: 'Focus su box jump e depth jump da 45cm. Timing braccia fluido.'
       },
       {
         id: 'sample-4',
         date: '2026-09-30',
-        approachJump: 75.0,
-        standingJump: 59.0,
+        standingReachMeters: 2.20,
+        approachPeakMeters: 2.83,
+        standingPeakMeters: 2.59,
+        approachJump: 63.0,
+        standingJump: 39.0,
         category: 'Partita / Torneo',
-        notes: 'Test in palestra prima dell amichevole. Scarpe Mizuno Wave Lightning. Ottimo stacco di schiacciata.'
+        notes: 'Test pre-partita. Buona reattività delle caviglie.'
       },
       {
         id: 'sample-5',
         date: '2026-10-14',
-        approachJump: 78.5,
-        standingJump: 62.0,
+        standingReachMeters: 2.20,
+        approachPeakMeters: 2.85,
+        standingPeakMeters: 2.60,
+        approachJump: 65.0,
+        standingJump: 40.0,
         category: 'Test Massimale',
-        notes: 'Nuovo Personal Record! Sensazione di esplosività pura. Il lavoro sui flessori e polpacci sta pagando.'
+        notes: 'Record personale! Toccato 2.85m con rincorsa (+65cm stacco) e 2.60m a muro (+40cm).'
       }
     ];
 
-    // Global state
     let jumpRecords = [];
     let progressChart = null;
     let currentFilter = 'all'; // 'all' | 'spike' | 'block'
+    let chartViewMode = 'elevation'; // 'elevation' (cm) | 'peak' (metri da terra)
 
-    // Initialize application
     window.onload = function() {
-      // Initialize Lucide icons
       lucide.createIcons();
-
-      // Load records from local storage or set initial samples
       loadRecords();
-
-      // Setup default date to today
-      const today = new Date().toISOString().split('T')[0];
-      document.getElementById('entryDate').value = today;
-
-      // Render chart, KPIs and list
+      document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
       updateUI();
     };
 
-    // Load data from LocalStorage
     function loadRecords() {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -511,23 +569,36 @@
           saveRecords();
         }
       } else {
-        jumpRecords = [...SAMPLE_RECORDS];
+        // Se c'è una vecchia v1, migra mantenendo i cm
+        const legacy = localStorage.getItem('volley_jump_tracker_records_v1');
+        if (legacy) {
+          try {
+            const parsed = JSON.parse(legacy);
+            jumpRecords = parsed.map(r => ({
+              ...r,
+              standingReachMeters: 2.20,
+              approachPeakMeters: +(2.20 + (r.approachJump / 100)).toFixed(2),
+              standingPeakMeters: +(2.20 + (r.standingJump / 100)).toFixed(2)
+            }));
+          } catch(e) {
+            jumpRecords = [...SAMPLE_RECORDS];
+          }
+        } else {
+          jumpRecords = [...SAMPLE_RECORDS];
+        }
         saveRecords();
       }
       sortRecordsByDate();
     }
 
-    // Save to LocalStorage
     function saveRecords() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(jumpRecords));
     }
 
-    // Sort chronologically (oldest to newest for analysis)
     function sortRecordsByDate() {
       jumpRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
     }
 
-    // Update entire Dashboard UI
     function updateUI() {
       sortRecordsByDate();
       renderKPIs();
@@ -536,31 +607,122 @@
       lucide.createIcons();
     }
 
-    // Calculate & render KPIs
+    function getLatestReach() {
+      if (jumpRecords.length > 0) {
+        const last = jumpRecords[jumpRecords.length - 1];
+        if (last.standingReachMeters) return last.standingReachMeters;
+      }
+      const saved = localStorage.getItem(DEFAULT_REACH_KEY);
+      return saved ? parseFloat(saved) : 2.20;
+    }
+
+    // SINCRONIZZAZIONE INPUT NEL MODALE
+    function syncFromReachMeters() {
+      const val = parseFloat(document.getElementById('entryStandingReachMeters').value);
+      if (!isNaN(val)) {
+        document.getElementById('entryStandingReachCm').value = Math.round(val * 100);
+        localStorage.setItem(DEFAULT_REACH_KEY, val);
+        recalcElevationsFromPeak();
+      }
+    }
+
+    function syncFromReachCm() {
+      const val = parseFloat(document.getElementById('entryStandingReachCm').value);
+      if (!isNaN(val)) {
+        document.getElementById('entryStandingReachMeters').value = (val / 100).toFixed(2);
+        localStorage.setItem(DEFAULT_REACH_KEY, (val / 100).toFixed(2));
+        recalcElevationsFromPeak();
+      }
+    }
+
+    function calculateFromApproachPeak() {
+      const reach = parseFloat(document.getElementById('entryStandingReachMeters').value);
+      const peak = parseFloat(document.getElementById('entryApproachPeakMeters').value);
+      if (!isNaN(reach) && !isNaN(peak)) {
+        const elevationCm = Math.max(0, Math.round((peak - reach) * 100 * 10) / 10);
+        document.getElementById('entryApproach').value = elevationCm;
+      }
+    }
+
+    function calculateFromApproachElevation() {
+      const reach = parseFloat(document.getElementById('entryStandingReachMeters').value);
+      const elev = parseFloat(document.getElementById('entryApproach').value);
+      if (!isNaN(reach) && !isNaN(elev)) {
+        const peak = (reach + (elev / 100)).toFixed(2);
+        document.getElementById('entryApproachPeakMeters').value = peak;
+      }
+    }
+
+    function calculateFromStandingPeak() {
+      const reach = parseFloat(document.getElementById('entryStandingReachMeters').value);
+      const peak = parseFloat(document.getElementById('entryStandingPeakMeters').value);
+      if (!isNaN(reach) && !isNaN(peak)) {
+        const elevationCm = Math.max(0, Math.round((peak - reach) * 100 * 10) / 10);
+        document.getElementById('entryStanding').value = elevationCm;
+      }
+    }
+
+    function calculateFromStandingElevation() {
+      const reach = parseFloat(document.getElementById('entryStandingReachMeters').value);
+      const elev = parseFloat(document.getElementById('entryStanding').value);
+      if (!isNaN(reach) && !isNaN(elev)) {
+        const peak = (reach + (elev / 100)).toFixed(2);
+        document.getElementById('entryStandingPeakMeters').value = peak;
+      }
+    }
+
+    function recalcElevationsFromPeak() {
+      if (document.getElementById('entryApproachPeakMeters').value) {
+        calculateFromApproachPeak();
+      }
+      if (document.getElementById('entryStandingPeakMeters').value) {
+        calculateFromStandingPeak();
+      }
+    }
+
+    // RENDER KPI STATS
     function renderKPIs() {
       if (jumpRecords.length === 0) {
-        document.getElementById('kpiApproachMax').textContent = '0';
-        document.getElementById('kpiStandingMax').textContent = '0';
+        document.getElementById('kpiApproachPeakMeters').textContent = '--';
+        document.getElementById('kpiApproachElevation').textContent = 'Elevazione: -- cm';
+        document.getElementById('kpiStandingPeakMeters').textContent = '--';
+        document.getElementById('kpiStandingElevation').textContent = 'Elevazione: -- cm';
+        document.getElementById('kpiStandingReach').textContent = '--';
         document.getElementById('kpiTotalGain').textContent = '0';
-        document.getElementById('kpiRecentAvg').textContent = '0';
         document.getElementById('quickProgressSummary').textContent = 'Nessun salto registrato';
         document.getElementById('avgDeltaValue').textContent = '-- cm';
         return;
       }
 
-      // Max approach jump
-      const maxApproach = Math.max(...jumpRecords.map(r => r.approachJump));
-      const recordApproachObj = jumpRecords.find(r => r.approachJump === maxApproach);
-      document.getElementById('kpiApproachMax').textContent = maxApproach.toFixed(1);
-      document.getElementById('kpiApproachDate').textContent = recordApproachObj ? `Record: ${formatDateDisplay(recordApproachObj.date)}` : 'Rincorsa';
+      // Max approach peak and jump
+      let maxApproachRec = jumpRecords[0];
+      jumpRecords.forEach(r => {
+        const peak = r.approachPeakMeters || (r.standingReachMeters ? r.standingReachMeters + r.approachJump/100 : r.approachJump/100);
+        const maxPeak = maxApproachRec.approachPeakMeters || (maxApproachRec.standingReachMeters ? maxApproachRec.standingReachMeters + maxApproachRec.approachJump/100 : maxApproachRec.approachJump/100);
+        if (peak >= maxPeak) maxApproachRec = r;
+      });
 
-      // Max standing jump
-      const maxStanding = Math.max(...jumpRecords.map(r => r.standingJump));
-      const recordStandingObj = jumpRecords.find(r => r.standingJump === maxStanding);
-      document.getElementById('kpiStandingMax').textContent = maxStanding.toFixed(1);
-      document.getElementById('kpiStandingDate').textContent = recordStandingObj ? `Record: ${formatDateDisplay(recordStandingObj.date)}` : 'Da Fermo';
+      const approachPeakM = maxApproachRec.approachPeakMeters || (maxApproachRec.standingReachMeters ? (maxApproachRec.standingReachMeters + maxApproachRec.approachJump/100) : (2.20 + maxApproachRec.approachJump/100));
+      document.getElementById('kpiApproachPeakMeters').textContent = Number(approachPeakM).toFixed(2);
+      document.getElementById('kpiApproachElevation').textContent = `Elevazione: ${maxApproachRec.approachJump} cm (${formatDateDisplay(maxApproachRec.date)})`;
 
-      // Total Gain (First recorded vs Latest recorded)
+      // Max standing peak and jump
+      let maxStandingRec = jumpRecords[0];
+      jumpRecords.forEach(r => {
+        const peak = r.standingPeakMeters || (r.standingReachMeters ? r.standingReachMeters + r.standingJump/100 : r.standingJump/100);
+        const maxPeak = maxStandingRec.standingPeakMeters || (maxStandingRec.standingReachMeters ? maxStandingRec.standingReachMeters + maxStandingRec.standingJump/100 : maxStandingRec.standingJump/100);
+        if (peak >= maxPeak) maxStandingRec = r;
+      });
+
+      const standingPeakM = maxStandingRec.standingPeakMeters || (maxStandingRec.standingReachMeters ? (maxStandingRec.standingReachMeters + maxStandingRec.standingJump/100) : (2.20 + maxStandingRec.standingJump/100));
+      document.getElementById('kpiStandingPeakMeters').textContent = Number(standingPeakM).toFixed(2);
+      document.getElementById('kpiStandingElevation').textContent = `Elevazione: ${maxStandingRec.standingJump} cm (${formatDateDisplay(maxStandingRec.date)})`;
+
+      // Standing Reach
+      const latestReach = getLatestReach();
+      document.getElementById('kpiStandingReach').textContent = latestReach.toFixed(2);
+
+      // Total Gain net cm
       const firstRecord = jumpRecords[0];
       const latestRecord = jumpRecords[jumpRecords.length - 1];
       const gain = latestRecord.approachJump - firstRecord.approachJump;
@@ -568,62 +730,92 @@
       document.getElementById('kpiTotalGain').textContent = `${gainPrefix}${gain.toFixed(1)}`;
       document.getElementById('kpiGainLabel').textContent = `Da ${firstRecord.approachJump}cm a ${latestRecord.approachJump}cm`;
 
-      // Recent 5 average
-      const recent = jumpRecords.slice(-5);
-      const avg = recent.reduce((sum, r) => sum + r.approachJump, 0) / recent.length;
-      document.getElementById('kpiRecentAvg').textContent = avg.toFixed(1);
-
-      // Average Delta between Approach and Standing
+      // Average delta
       const avgDelta = jumpRecords.reduce((sum, r) => sum + (r.approachJump - r.standingJump), 0) / jumpRecords.length;
       document.getElementById('avgDeltaValue').textContent = `+${avgDelta.toFixed(1)} cm con rincorsa`;
 
-      // Quick summary badge in banner
-      document.getElementById('quickProgressSummary').textContent = `Progresso totale: ${gainPrefix}${gain.toFixed(1)} cm (${jumpRecords.length} test registrati)`;
+      document.getElementById('quickProgressSummary').textContent = `Max toccato: ${Number(approachPeakM).toFixed(2)}m (Stacco +${maxApproachRec.approachJump}cm)`;
       document.getElementById('chartCountBadge').textContent = `${jumpRecords.length} sessioni`;
     }
 
-    // Chart.js initialization and updates
+    // CHART
     function renderChart() {
       const ctx = document.getElementById('jumpProgressChart').getContext('2d');
-
       const labels = jumpRecords.map(r => formatShortDate(r.date));
-      const approachData = jumpRecords.map(r => r.approachJump);
-      const standingData = jumpRecords.map(r => r.standingJump);
 
-      // Datasets filtered by selection
+      const isPeakMode = chartViewMode === 'peak';
+      document.getElementById('chartSubtitle').textContent = isPeakMode 
+        ? 'Punto Massimo da terra (Metri)' 
+        : 'Elevazione Netta Stacco (Centimetri)';
+
+      // Calcola i dati a seconda della modalità
+      const approachData = jumpRecords.map(r => {
+        if (isPeakMode) {
+          const reach = r.standingReachMeters || 2.20;
+          return Number((r.approachPeakMeters || (reach + r.approachJump/100)).toFixed(2));
+        }
+        return r.approachJump;
+      });
+
+      const standingData = jumpRecords.map(r => {
+        if (isPeakMode) {
+          const reach = r.standingReachMeters || 2.20;
+          return Number((r.standingPeakMeters || (reach + r.standingJump/100)).toFixed(2));
+        }
+        return r.standingJump;
+      });
+
+      const reachData = jumpRecords.map(r => {
+        const reach = r.standingReachMeters || 2.20;
+        return isPeakMode ? reach : 0;
+      });
+
       const datasets = [];
 
       if (currentFilter === 'all' || currentFilter === 'spike') {
         datasets.push({
-          label: 'Salto con Rincorsa (Spike)',
+          label: isPeakMode ? 'Punto Max Rincorsa (m)' : 'Elevazione Rincorsa (cm)',
           data: approachData,
           borderColor: '#FF6B00',
           backgroundColor: 'rgba(255, 107, 0, 0.15)',
-          fill: true,
+          fill: !isPeakMode,
           tension: 0.35,
           borderWidth: 2.5,
           pointBackgroundColor: '#FF6B00',
           pointBorderColor: '#0B0F19',
           pointBorderWidth: 1.5,
-          pointRadius: 3.5,
+          pointRadius: 4,
           pointHoverRadius: 6
         });
       }
 
       if (currentFilter === 'all' || currentFilter === 'block') {
         datasets.push({
-          label: 'Salto da Fermo (Block)',
+          label: isPeakMode ? 'Punto Max Fermo (m)' : 'Elevazione Fermo (cm)',
           data: standingData,
           borderColor: '#38BDF8',
           backgroundColor: 'rgba(56, 189, 248, 0.1)',
-          fill: true,
+          fill: !isPeakMode,
           tension: 0.35,
           borderWidth: 2,
           pointBackgroundColor: '#38BDF8',
           pointBorderColor: '#0B0F19',
           pointBorderWidth: 1.5,
-          pointRadius: 3,
+          pointRadius: 3.5,
           pointHoverRadius: 5
+        });
+      }
+
+      // Se in modalità metri da terra, mostra anche la linea di portata braccio steso
+      if (isPeakMode) {
+        datasets.push({
+          label: 'Portata Piedi a Terra (m)',
+          data: reachData,
+          borderColor: '#F59E0B',
+          borderDash: [4, 4],
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: false
         });
       }
 
@@ -641,21 +833,14 @@
           responsive: true,
           maintainAspectRatio: false,
           layout: {
-            padding: {
-              left: 0,
-              right: 6,
-              top: 6,
-              bottom: 0
-            }
+            padding: { left: 0, right: 8, top: 8, bottom: 0 }
           },
           interaction: {
             mode: 'index',
             intersect: false
           },
           plugins: {
-            legend: {
-              display: false // Using our own custom interactive legend
-            },
+            legend: { display: false },
             tooltip: {
               backgroundColor: '#131B2E',
               titleColor: '#F8FAFC',
@@ -664,46 +849,30 @@
               borderWidth: 1,
               padding: 8,
               cornerRadius: 10,
-              titleFont: { size: 11 },
-              bodyFont: { size: 11 },
               callbacks: {
                 label: function(context) {
-                  return ` ${context.dataset.label}: ${context.parsed.y} cm`;
+                  const unit = isPeakMode ? ' m' : ' cm';
+                  return ` ${context.dataset.label}: ${context.parsed.y}${unit}`;
                 }
               }
             }
           },
           scales: {
             x: {
-              grid: {
-                color: 'rgba(255, 255, 255, 0.04)',
-                drawBorder: false
-              },
+              grid: { color: 'rgba(255, 255, 255, 0.04)', drawBorder: false },
               ticks: {
                 color: '#64748B',
-                maxRotation: 0,
-                autoSkip: true,
                 maxTicksLimit: 6,
-                font: {
-                  size: 10,
-                  family: '"Plus Jakarta Sans", sans-serif'
-                }
+                font: { size: 10, family: '"Plus Jakarta Sans", sans-serif' }
               }
             },
             y: {
-              grid: {
-                color: 'rgba(255, 255, 255, 0.06)',
-                drawBorder: false
-              },
+              grid: { color: 'rgba(255, 255, 255, 0.06)', drawBorder: false },
               ticks: {
                 color: '#64748B',
-                maxTicksLimit: 5,
-                font: {
-                  size: 10,
-                  family: '"Plus Jakarta Sans", sans-serif'
-                },
+                font: { size: 10, family: '"Plus Jakarta Sans", sans-serif' },
                 callback: function(value) {
-                  return value + 'cm';
+                  return isPeakMode ? value.toFixed(2) + 'm' : value + 'cm';
                 }
               }
             }
@@ -712,30 +881,42 @@
       });
     }
 
-    // Filter toggle for Chart
+    function setChartViewMode(mode) {
+      chartViewMode = mode;
+      const bElev = document.getElementById('viewElevationBtn');
+      const bPeak = document.getElementById('viewPeakBtn');
+      if (mode === 'elevation') {
+        bElev.className = 'px-2 py-0.5 text-[10.5px] font-semibold rounded-md bg-volley-orange text-white transition';
+        bPeak.className = 'px-2 py-0.5 text-[10.5px] font-semibold rounded-md text-slate-400 hover:text-white transition';
+      } else {
+        bPeak.className = 'px-2 py-0.5 text-[10.5px] font-semibold rounded-md bg-volley-orange text-white transition';
+        bElev.className = 'px-2 py-0.5 text-[10.5px] font-semibold rounded-md text-slate-400 hover:text-white transition';
+      }
+      renderChart();
+    }
+
     function setChartFilter(filter) {
       currentFilter = filter;
       const bAll = document.getElementById('filterAll');
       const bSpike = document.getElementById('filterSpike');
       const bBlock = document.getElementById('filterBlock');
 
-      // Reset classes
       [bAll, bSpike, bBlock].forEach(btn => {
-        btn.className = 'px-2.5 py-1 text-xs font-semibold rounded-lg text-slate-400 hover:text-white transition';
+        btn.className = 'px-2 py-0.5 text-[10.5px] font-semibold rounded-md text-slate-400 hover:text-white transition';
       });
 
       if (filter === 'all') {
-        bAll.className = 'px-2.5 py-1 text-xs font-semibold rounded-lg bg-volley-orange text-white transition';
+        bAll.className = 'px-2 py-0.5 text-[10.5px] font-semibold rounded-md bg-slate-700 text-white transition';
       } else if (filter === 'spike') {
-        bSpike.className = 'px-2.5 py-1 text-xs font-semibold rounded-lg bg-volley-orange text-white transition';
+        bSpike.className = 'px-2 py-0.5 text-[10.5px] font-semibold rounded-md bg-volley-orange text-white transition';
       } else if (filter === 'block') {
-        bBlock.className = 'px-2.5 py-1 text-xs font-semibold rounded-lg bg-sky-500 text-white transition';
+        bBlock.className = 'px-2 py-0.5 text-[10.5px] font-semibold rounded-md bg-sky-500 text-white transition';
       }
 
       renderChart();
     }
 
-    // Render Training Session Diary List (Reverse chronological for reading history)
+    // DIARIO SESSIONI
     function renderHistoryList() {
       const container = document.getElementById('sessionList');
       container.innerHTML = '';
@@ -745,18 +926,20 @@
           <div class="text-center py-10 px-4 bg-volley-card/50 rounded-2xl border border-dashed border-volley-border">
             <i data-lucide="sparkles" class="w-8 h-8 text-slate-500 mx-auto mb-2"></i>
             <p class="text-sm font-semibold text-slate-300">Nessuna sessione salvata</p>
-            <p class="text-xs text-slate-500 mt-1">Tocca 'Nuovo Salto' per aggiungere il tuo primo test!</p>
+            <p class="text-xs text-slate-500 mt-1">Tocca 'Nuovo Salto' per registrare il tuo stacco!</p>
           </div>
         `;
         return;
       }
 
-      // Display descending order (most recent first)
       const displayRecords = [...jumpRecords].reverse();
 
       displayRecords.forEach((entry) => {
+        const reach = entry.standingReachMeters || 2.20;
+        const approachPeak = entry.approachPeakMeters || Number((reach + (entry.approachJump / 100)).toFixed(2));
+        const standingPeak = entry.standingPeakMeters || Number((reach + (entry.standingJump / 100)).toFixed(2));
         const delta = (entry.approachJump - entry.standingJump).toFixed(1);
-        
+
         const card = document.createElement('div');
         card.className = 'bg-volley-card border border-volley-border rounded-2xl p-4 transition hover:border-slate-600';
         card.innerHTML = `
@@ -767,10 +950,12 @@
                 <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-slate-800 text-sky-400 border border-slate-700">
                   ${entry.category || 'Allenamento'}
                 </span>
+                <span class="text-[10px] font-semibold text-amber-300/90 bg-amber-500/10 px-2 py-0.5 rounded-full border border-amber-500/20">
+                  Portata: ${reach.toFixed(2)}m
+                </span>
               </div>
             </div>
 
-            <!-- Actions (Edit / Delete) -->
             <div class="flex items-center gap-1">
               <button onclick="editEntry('${entry.id}')" title="Modifica" class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition">
                 <i data-lucide="edit-3" class="w-4 h-4"></i>
@@ -781,58 +966,101 @@
             </div>
           </div>
 
-          <!-- Jump Metrics Pill Badges -->
-          <div class="grid grid-cols-3 gap-2 my-3">
-            <div class="bg-slate-900/80 rounded-xl p-2.5 border border-volley-border text-center">
-              <span class="block text-[10px] uppercase font-bold text-slate-400">Rincorsa</span>
-              <span class="text-base font-black text-volley-orange">${entry.approachJump} <span class="text-[10px] font-normal">cm</span></span>
+          <!-- Cards metriche doppie: Metro da terra + cm elevazione -->
+          <div class="grid grid-cols-2 gap-2.5 my-3">
+            <!-- Rincorsa Card -->
+            <div class="bg-slate-900/80 rounded-xl p-2.5 border border-volley-border">
+              <div class="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400 mb-1">
+                <span class="text-volley-orange">Rincorsa</span>
+                <span>Spike</span>
+              </div>
+              <div class="flex items-baseline justify-between">
+                <div>
+                  <span class="text-lg font-black text-white">${approachPeak.toFixed(2)}</span>
+                  <span class="text-[11px] font-bold text-slate-400">m</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-sm font-bold text-volley-orange">+${entry.approachJump}</span>
+                  <span class="text-[10px] text-slate-400">cm</span>
+                </div>
+              </div>
             </div>
-            <div class="bg-slate-900/80 rounded-xl p-2.5 border border-volley-border text-center">
-              <span class="block text-[10px] uppercase font-bold text-slate-400">Da Fermo</span>
-              <span class="text-base font-black text-sky-400">${entry.standingJump} <span class="text-[10px] font-normal">cm</span></span>
-            </div>
-            <div class="bg-slate-900/80 rounded-xl p-2.5 border border-volley-border text-center">
-              <span class="block text-[10px] uppercase font-bold text-slate-400">Delta</span>
-              <span class="text-base font-black text-emerald-400">+${delta} <span class="text-[10px] font-normal">cm</span></span>
+
+            <!-- Da Fermo Card -->
+            <div class="bg-slate-900/80 rounded-xl p-2.5 border border-volley-border">
+              <div class="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400 mb-1">
+                <span class="text-sky-400">Da Fermo</span>
+                <span>Block</span>
+              </div>
+              <div class="flex items-baseline justify-between">
+                <div>
+                  <span class="text-lg font-black text-white">${standingPeak.toFixed(2)}</span>
+                  <span class="text-[11px] font-bold text-slate-400">m</span>
+                </div>
+                <div class="text-right">
+                  <span class="text-sm font-bold text-sky-400">+${entry.standingJump}</span>
+                  <span class="text-[10px] text-slate-400">cm</span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <!-- Diary Paragraph / Notes -->
+          <!-- Delta helper pill -->
+          <div class="flex items-center justify-between text-[11px] text-slate-400 px-1 py-0.5">
+            <span>Guadagno con rincorsa: <strong class="text-emerald-400">+${delta} cm</strong></span>
+            <span class="text-slate-500">${((approachPeak - standingPeak)*100).toFixed(0)}cm più in alto del muro</span>
+          </div>
+
+          <!-- Notes -->
           ${entry.notes ? `
-            <div class="mt-2 pt-2.5 border-t border-volley-border/70 text-xs text-slate-300 bg-slate-900/40 p-3 rounded-xl border border-slate-800/80">
+            <div class="mt-2 pt-2.5 border-t border-volley-border/70 text-xs text-slate-300 bg-slate-900/40 p-2.5 rounded-xl border border-slate-800/80">
               <div class="flex items-center gap-1.5 text-slate-400 text-[11px] font-semibold mb-1">
-                <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-400"></i> Note Allenamento:
+                <i data-lucide="file-text" class="w-3.5 h-3.5 text-amber-400"></i> Note:
               </div>
               <p class="leading-relaxed whitespace-pre-line text-slate-300">${escapeHtml(entry.notes)}</p>
             </div>
-          ` : `
-            <div class="text-[11px] text-slate-500 italic mt-1">Nessuna nota registrata.</div>
-          `}
+          ` : ''}
         `;
         container.appendChild(card);
       });
     }
 
-    // Modal Control: Entry
+    // MODAL HANDLERS
     function openEntryModal(id = null) {
       const modal = document.getElementById('entryModal');
       const form = document.getElementById('jumpForm');
       form.reset();
 
+      const defaultReach = getLatestReach();
+      document.getElementById('entryStandingReachMeters').value = defaultReach.toFixed(2);
+      document.getElementById('entryStandingReachCm').value = Math.round(defaultReach * 100);
+
       if (id) {
-        // Edit mode
         const item = jumpRecords.find(r => r.id === id);
         if (item) {
           document.getElementById('modalTitle').textContent = 'Modifica Sessione';
           document.getElementById('editEntryId').value = item.id;
           document.getElementById('entryDate').value = item.date;
+          
+          const rReach = item.standingReachMeters || defaultReach;
+          document.getElementById('entryStandingReachMeters').value = rReach.toFixed(2);
+          document.getElementById('entryStandingReachCm').value = Math.round(rReach * 100);
+
           document.getElementById('entryApproach').value = item.approachJump;
           document.getElementById('entryStanding').value = item.standingJump;
+
+          document.getElementById('entryApproachPeakMeters').value = item.approachPeakMeters 
+            ? item.approachPeakMeters.toFixed(2) 
+            : (rReach + (item.approachJump / 100)).toFixed(2);
+
+          document.getElementById('entryStandingPeakMeters').value = item.standingPeakMeters 
+            ? item.standingPeakMeters.toFixed(2) 
+            : (rReach + (item.standingJump / 100)).toFixed(2);
+
           document.getElementById('entryCategory').value = item.category || 'Test Massimale';
           document.getElementById('entryNotes').value = item.notes || '';
         }
       } else {
-        // Create mode
         document.getElementById('modalTitle').textContent = 'Registra Salto';
         document.getElementById('editEntryId').value = '';
         document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
@@ -849,7 +1077,6 @@
       modal.classList.remove('flex');
     }
 
-    // Modal Control: Data Backup
     function openDataModal() {
       const modal = document.getElementById('dataModal');
       modal.classList.remove('hidden');
@@ -863,48 +1090,67 @@
       modal.classList.remove('flex');
     }
 
-    // Save or Update Entry Form submission
     function handleSaveEntry(e) {
       e.preventDefault();
 
       const editId = document.getElementById('editEntryId').value;
       const date = document.getElementById('entryDate').value;
-      const approach = parseFloat(document.getElementById('entryApproach').value);
-      const standing = parseFloat(document.getElementById('entryStanding').value);
-      const category = document.getElementById('entryCategory').value;
-      const notes = document.getElementById('entryNotes').value.trim();
+      const reachM = parseFloat(document.getElementById('entryStandingReachMeters').value) || 2.20;
+      
+      let approachElev = parseFloat(document.getElementById('entryApproach').value);
+      let standingElev = parseFloat(document.getElementById('entryStanding').value);
 
-      if (isNaN(approach) || isNaN(standing)) {
-        showToast('Inserisci valori validi in cm');
+      let approachPeak = parseFloat(document.getElementById('entryApproachPeakMeters').value);
+      let standingPeak = parseFloat(document.getElementById('entryStandingPeakMeters').value);
+
+      // Auto-calcola le corrispondenze se mancanti
+      if (isNaN(approachPeak) && !isNaN(approachElev)) {
+        approachPeak = parseFloat((reachM + (approachElev / 100)).toFixed(2));
+      }
+      if (isNaN(standingPeak) && !isNaN(standingElev)) {
+        standingPeak = parseFloat((reachM + (standingElev / 100)).toFixed(2));
+      }
+      if (isNaN(approachElev) && !isNaN(approachPeak)) {
+        approachElev = Math.max(0, Math.round((approachPeak - reachM) * 100 * 10) / 10);
+      }
+      if (isNaN(standingElev) && !isNaN(standingPeak)) {
+        standingElev = Math.max(0, Math.round((standingPeak - reachM) * 100 * 10) / 10);
+      }
+
+      if (isNaN(approachElev) || isNaN(standingElev)) {
+        showToast('Compila i dati del salto');
         return;
       }
 
+      const category = document.getElementById('entryCategory').value;
+      const notes = document.getElementById('entryNotes').value.trim();
+
+      // Salva l'altezza di reach come preferenza predefinita
+      localStorage.setItem(DEFAULT_REACH_KEY, reachM);
+
+      const recordData = {
+        date,
+        standingReachMeters: reachM,
+        approachPeakMeters: approachPeak,
+        standingPeakMeters: standingPeak,
+        approachJump: approachElev,
+        standingJump: standingElev,
+        category,
+        notes
+      };
+
       if (editId) {
-        // Update existing
         const index = jumpRecords.findIndex(r => r.id === editId);
         if (index !== -1) {
-          jumpRecords[index] = {
-            ...jumpRecords[index],
-            date,
-            approachJump: approach,
-            standingJump: standing,
-            category,
-            notes
-          };
-          showToast('Sessione aggiornata con successo!');
+          jumpRecords[index] = { ...jumpRecords[index], ...recordData };
+          showToast('Sessione aggiornata!');
         }
       } else {
-        // Create new
-        const newRecord = {
+        jumpRecords.push({
           id: 'jump_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
-          date,
-          approachJump: approach,
-          standingJump: standing,
-          category,
-          notes
-        };
-        jumpRecords.push(newRecord);
-        showToast('Nuovo salto salvato con successo!');
+          ...recordData
+        });
+        showToast('Salto registrato con successo!');
       }
 
       saveRecords();
@@ -912,23 +1158,17 @@
       updateUI();
     }
 
-    // Edit and Delete handlers
     function editEntry(id) {
       openEntryModal(id);
     }
 
     function deleteEntry(id) {
-      const item = jumpRecords.find(r => r.id === id);
-      if (!item) return;
-
-      // Inline friendly removal confirm
       jumpRecords = jumpRecords.filter(r => r.id !== id);
       saveRecords();
       updateUI();
       showToast('Sessione rimossa');
     }
 
-    // Reset to initial sample data
     function resetToSampleData() {
       jumpRecords = [...SAMPLE_RECORDS];
       saveRecords();
@@ -937,7 +1177,6 @@
       showToast('Dati di esempio ripristinati');
     }
 
-    // Export JSON file
     function exportDataJSON() {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jumpRecords, null, 2));
       const downloadAnchor = document.createElement('a');
@@ -949,7 +1188,6 @@
       showToast('Backup esportato!');
     }
 
-    // Import JSON file
     function importDataJSON(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -974,7 +1212,6 @@
       reader.readAsText(file);
     }
 
-    // Helper: Toast message
     function showToast(msg) {
       const toast = document.getElementById('toastNotification');
       const text = document.getElementById('toastMessage');
@@ -989,12 +1226,10 @@
       }, 2500);
     }
 
-    // Helper: scroll to history
     function scrollToHistory() {
       document.getElementById('historySection').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Helper: Date formatters (Italian locale)
     function formatDateDisplay(dateStr) {
       if (!dateStr) return '';
       const d = new Date(dateStr);
@@ -1007,7 +1242,6 @@
       return d.toLocaleDateString('it-IT', { day: '2-digit', month: 'short' });
     }
 
-    // Helper: XSS safety for training diary text
     function escapeHtml(string) {
       const div = document.createElement('div');
       div.innerText = string;
